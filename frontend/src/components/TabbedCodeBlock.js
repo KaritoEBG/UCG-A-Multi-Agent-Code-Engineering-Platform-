@@ -54,12 +54,17 @@ const TreeNode = ({ node, depth = 0, activeIndex, onSelect }) => {
 };
 
 /* ========== Main Component ========== */
-const TabbedCodeBlock = ({ code, maxHeight = 'calc(100vh - 250px)', onCopyCode }) => {
+const TabbedCodeBlock = ({ code, maxHeight = 'calc(100vh - 250px)', onCopyCode, projectName, version = 1 }) => {
     const [activeTab, setActiveTab] = useState(0);
     const [copyStatus, setCopyStatus] = useState('');
     const [downloadStatus, setDownloadStatus] = useState('');
 
     const { files, isMultiFile, tree, totalLines } = useMemo(() => parseCodeFiles(code), [code]);
+
+    // Use AI-generated projectName directly, fallback to 'generated-code'
+    const displayName = projectName || 'generated-code';
+    // Ensure version is always at least 1
+    const displayVersion = Math.max(version, 1);
 
     // Single file → plain CodeBlock, no chrome
     if (!isMultiFile || files.length <= 1) {
@@ -101,8 +106,9 @@ const TabbedCodeBlock = ({ code, maxHeight = 'calc(100vh - 250px)', onCopyCode }
             const zip = new JSZip();
             files.forEach(file => zip.file(file.filepath, file.code));
             const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, 'generated-code.zip');
-            setDownloadStatus('✓ Done!');
+            const zipName = `${displayName}-v${displayVersion}.zip`;
+            saveAs(blob, zipName);
+            setDownloadStatus(`✓ ${displayName}-v${displayVersion}`);
         } catch (err) {
             console.error('ZIP error:', err);
             setDownloadStatus('Failed');
@@ -117,7 +123,7 @@ const TabbedCodeBlock = ({ code, maxHeight = 'calc(100vh - 250px)', onCopyCode }
                 <div className="pv-sidebar-header">
                     <span className="pv-project-icon">📁</span>
                     <div className="pv-project-info">
-                        <span className="pv-project-name">project</span>
+                        <span className="pv-project-name">{displayName}-v{displayVersion}</span>
                         <span className="pv-project-meta">{files.length} files • {totalLines} lines</span>
                     </div>
                 </div>

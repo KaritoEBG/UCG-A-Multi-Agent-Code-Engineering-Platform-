@@ -60,7 +60,9 @@ CRITICAL RULES:
 - NEVER return placeholder strings — return real code
 - Do NOT include markdown or code blocks — just pure JSON
 - Escape all quotes and newlines properly in JSON strings
-- Include severity level (CRITICAL/HIGH/MEDIUM/LOW) for each fix"""
+- Include severity level (CRITICAL/HIGH/MEDIUM/LOW) for each fix
+- COMMENTS: Keep comments MINIMAL. Only short single-line comments. Do NOT add docstrings, multi-line comment blocks, or verbose explanations. Do NOT add comments to every line.
+- Do NOT wrap fixed_code in ```python or any markdown fence"""
     
     def scan(self, code):
         """Scan code for security vulnerabilities and return results with fixes"""

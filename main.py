@@ -8,8 +8,10 @@ from pydantic import BaseModel
 from typing import Optional, List
 import json
 import time
+import re
+import os
 
-from config import settings
+from config import settings, key_pool
 from database import connect_to_mongo, close_mongo_connection, SessionDB, MessageDB
 from auth import router as auth_router, get_current_user, get_optional_user
 from orchestrator import Orchestrator
@@ -37,10 +39,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS middleware
+# CORS middleware - use ALLOWED_ORIGINS env var in production
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,14 +90,20 @@ async def health_check():
     return {"status": "healthy", "message": "Uber Code Generator API (FastAPI + MongoDB)"}
 
 
+@app.get("/api/key-pool/status")
+async def key_pool_status():
+    """Monitor API key pool health"""
+    return key_pool.get_status()
+
 @app.post("/api/generate")
 async def generate_code(request: GenerateRequest, user: Optional[dict] = Depends(get_optional_user)):
     """Generate code from a prompt (non-streaming)"""
     if not request.prompt:
         raise HTTPException(status_code=400, detail="Prompt is required")
     
-    # Use API key from request or from settings
-    api_key = request.api_key or settings.GROQ_API_KEY
+    # Use API key from request or get a rotated key from the pool
+    from config import key_pool
+    api_key = request.api_key or key_pool.get_key()
     orchestrator = Orchestrator(api_key)
     result = orchestrator.run_workflow(request.prompt)
     
@@ -152,6 +161,15 @@ Please modify or rewrite the above code according to the user's request."""
         ]
         start_time = time.time()
         
+        # ===== PLANNER PHASE (runs silently in background) =====
+        # Classify prompt as single-file or multi-file
+        code_mode = orchestrator.classify_prompt(enhanced_prompt)
+        print(f"📋 Prompt classified as: {code_mode}")
+        yield f"data: {json.dumps({'type': 'classification', 'mode': code_mode})}\n\n"
+        
+        # Enhance the prompt for multi-file projects
+        generation_prompt = orchestrator.enhance_prompt(enhanced_prompt, mode=code_mode)
+        
         # ===== CODE GENERATOR PHASE =====
         workflow_steps[0]["status"] = "active"
         agent_start = AGUIEventBuilder.agent_start(
@@ -167,9 +185,20 @@ Please modify or rewrite the above code according to the user's request."""
         gen_start = time.time()
         line_count = 0
         
-        # Use enhanced_prompt that includes context if available
-        for chunk in orchestrator.generate_code_stream(enhanced_prompt):
+        fence_stripped = False  # Track if we already stripped opening fence
+        
+        # Use the enhanced prompt for code generation
+        for chunk in orchestrator.generate_code_stream(generation_prompt, mode=code_mode):
             full_code += chunk
+            
+            # Strip opening markdown fence from very first chunk (e.g. ```python\n)
+            if not fence_stripped:
+                import re
+                full_code = re.sub(r'^```\w*\n', '', full_code)
+                fence_stripped = True
+                # Recalculate chunk to send only the cleaned content
+                chunk = full_code
+            
             line_count = len(full_code.splitlines())
             
             # Send chunk with UI metadata
@@ -184,9 +213,23 @@ Please modify or rewrite the above code according to the user's request."""
             }
             yield f"data: {json.dumps(chunk_event)}\n\n"
         
+        # Strip trailing ``` fence if present
+        if full_code.rstrip().endswith('```'):
+            full_code = full_code.rstrip()
+            full_code = full_code[:full_code.rfind('```')].rstrip()
+        
         gen_duration = time.time() - gen_start
         original_code = full_code
         current_code = full_code
+        
+        # Strip markdown fences if LLM included them (e.g. ```python ... ```)
+        code_lines = current_code.split('\n')
+        if code_lines and re.match(r'^```\w*$', code_lines[0].strip()):
+            code_lines = code_lines[1:]
+        if code_lines and code_lines[-1].strip() == '```':
+            code_lines = code_lines[:-1]
+        current_code = '\n'.join(code_lines)
+        original_code = current_code
         
         # Code generator complete
         workflow_steps[0]["status"] = "complete"
@@ -228,7 +271,12 @@ Please modify or rewrite the above code according to the user's request."""
         # Process fixes with rich UI specs
         val_fixes = []
         if validation.get('fixed_code') and validation.get('fixes_applied'):
-            current_code = validation['fixed_code']
+            fixed = validation['fixed_code']
+            # Strip markdown fences from agent output
+            fl = fixed.split('\n')
+            if fl and re.match(r'^```\w*$', fl[0].strip()): fl = fl[1:]
+            if fl and fl[-1].strip() == '```': fl = fl[:-1]
+            current_code = '\n'.join(fl)
             for fix in validation['fixes_applied']:
                 if isinstance(fix, dict):
                     fix_spec = create_fix_spec(
@@ -325,7 +373,12 @@ Please modify or rewrite the above code according to the user's request."""
         
         test_fixes = []
         if tests.get('fixed_code') and tests.get('fixes_applied'):
-            current_code = tests['fixed_code']
+            fixed = tests['fixed_code']
+            # Strip markdown fences from agent output
+            fl = fixed.split('\n')
+            if fl and re.match(r'^```\w*$', fl[0].strip()): fl = fl[1:]
+            if fl and fl[-1].strip() == '```': fl = fl[:-1]
+            current_code = '\n'.join(fl)
             for fix in tests['fixes_applied']:
                 if isinstance(fix, dict):
                     fix_spec = create_fix_spec(
@@ -420,7 +473,12 @@ Please modify or rewrite the above code according to the user's request."""
         
         sec_fixes = []
         if security.get('fixed_code') and security.get('fixes_applied'):
-            current_code = security['fixed_code']
+            fixed = security['fixed_code']
+            # Strip markdown fences from agent output
+            fl = fixed.split('\n')
+            if fl and re.match(r'^```\w*$', fl[0].strip()): fl = fl[1:]
+            if fl and fl[-1].strip() == '```': fl = fl[:-1]
+            current_code = '\n'.join(fl)
             for fix in security['fixes_applied']:
                 if isinstance(fix, dict):
                     fix_spec = create_fix_spec(
@@ -492,11 +550,25 @@ Please modify or rewrite the above code according to the user's request."""
         yield f"data: {json.dumps(sec_result)}\n\n"
         yield f"data: {json.dumps({'type': 'workflow_update', 'steps': workflow_steps})}\n\n"
         
+        # ===== SETUP INSTRUCTIONS (for multi-file projects) =====
+        setup_guide = orchestrator.generate_setup_instructions(current_code)
+        if setup_guide:
+            yield f"data: {json.dumps({'type': 'setup_guide', 'data': setup_guide})}\n\n"
+        
         # ===== FINAL RESULT =====
         total_duration = time.time() - start_time
         total_fixes = sum(len(f['fixes']) for f in all_fixes)
         code_was_fixed = current_code != original_code
         
+        # ===== PROJECT DESCRIPTION (for chat cards) =====
+        project_desc = orchestrator.generate_project_description(
+            code=current_code, 
+            original_code=original_code if code_was_fixed else None,
+            prompt=request.prompt
+        )
+        if project_desc:
+            yield f"data: {json.dumps({'type': 'project_description', 'data': project_desc})}\n\n"
+            
         # Build comprehensive UI for final result
         final_ui_components = []
         
@@ -523,6 +595,8 @@ Please modify or rewrite the above code according to the user's request."""
                 'original_code': original_code if code_was_fixed else None,
                 'prompt': request.prompt,
                 'all_fixes': all_fixes,
+                'setup_guide': setup_guide,
+                'project_desc': project_desc,
                 'total_fixes': total_fixes,
                 'code_was_fixed': code_was_fixed,
                 'workflow': workflow_steps,
@@ -656,6 +730,7 @@ async def get_session(session_id: str, user: dict = Depends(get_current_user)):
     return {
         "session_id": session["_id"],
         "title": session.get("title", "New Chat"),
+        "project_name": session.get("project_name", ""),
         "created_at": session["created_at"].isoformat(),
         "messages": [{
             "id": msg["_id"],
@@ -763,6 +838,29 @@ async def update_session_title_endpoint(
     return {"message": "Title updated", "title": title}
 
 
+class ProjectNameUpdateRequest(BaseModel):
+    project_name: str
+
+
+@app.patch("/api/sessions/{session_id}/project-name")
+async def update_session_project_name_endpoint(
+    session_id: str,
+    request: ProjectNameUpdateRequest,
+    user: dict = Depends(get_current_user)
+):
+    """Save the AI-generated project base name to a session"""
+    session = await SessionDB.get_session(session_id)
+
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if session["user_id"] != user["_id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    await SessionDB.update_session_project_name(session_id, request.project_name)
+    return {"message": "Project name updated", "project_name": request.project_name}
+
+
 class BulkDeleteRequest(BaseModel):
     session_ids: List[str]
 
@@ -803,6 +901,74 @@ async def cleanup_empty_sessions(user: dict = Depends(get_current_user)):
                 print(f"Error cleaning up session {session['_id']}: {e}")
     
     return {"message": f"Cleaned up {deleted_count} empty sessions", "deleted_count": deleted_count}
+
+class ProjectNameRequest(BaseModel):
+    prompt: str
+
+
+@app.post("/api/generate-project-name")
+async def generate_project_name(request: ProjectNameRequest):
+    """Generate a compact, kebab-case project name from a user prompt using AI"""
+    import httpx
+
+    prompt_text = request.prompt.strip()
+    if not prompt_text:
+        return {"project_name": "generated-code"}
+
+    try:
+        timeout = httpx.Timeout(connect=10.0, read=15.0, write=10.0, pool=10.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            # Retry up to 3 times with different API keys
+            for attempt in range(3):
+                try:
+                    response = await client.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {key_pool.get_key()}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": "llama-3.3-70b-versatile",
+                            "messages": [
+                                {
+                                    "role": "system",
+                                    "content": (
+                                        "Generate a very short project name (2-3 words max) in kebab-case (lowercase, hyphen-separated) "
+                                        "for a coding project based on the user's request. "
+                                        "Examples: 'api-retry-handler', 'auth-system', 'rate-limiter', 'todo-app', 'db-pool-manager'. "
+                                        "Return ONLY the kebab-case name, nothing else. No quotes, no explanation."
+                                    )
+                                },
+                                {
+                                    "role": "user",
+                                    "content": f"User's request: {prompt_text[:500]}"
+                                }
+                            ],
+                            "temperature": 0.3,
+                            "max_tokens": 20
+                        }
+                    )
+                    response.raise_for_status()
+                    data = response.json()
+                    name = data["choices"][0]["message"]["content"].strip().strip('"').strip("'").strip()
+                    # Sanitize: ensure kebab-case, no special chars
+                    name = re.sub(r'[^a-z0-9\-]', '', name.lower().replace(' ', '-'))
+                    name = re.sub(r'-+', '-', name).strip('-')
+                    if name:
+                        return {"project_name": name[:40]}
+                    break
+                except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError) as timeout_err:
+                    print(f"⚠️ Project name gen attempt {attempt+1}/3 failed: {type(timeout_err).__name__}")
+                    if attempt == 2:
+                        raise
+    except Exception as e:
+        print(f"Error generating project name ({type(e).__name__}): {repr(e)}")
+
+    # Fallback: extract keywords
+    words = re.sub(r'[^a-z0-9\s]', '', prompt_text.lower()).split()
+    stop = {'a','an','the','and','or','to','for','of','with','in','on','is','create','build','write','generate','make','using','use','code','function','class','please'}
+    keywords = [w for w in words if w not in stop and len(w) > 1][:3]
+    return {"project_name": "-".join(keywords) if keywords else "generated-code"}
 
 
 # Run with: python main.py

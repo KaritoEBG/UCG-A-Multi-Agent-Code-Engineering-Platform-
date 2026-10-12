@@ -141,8 +141,11 @@
 }
 
 .feature-icon {
-  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--primary);
+  flex-shrink: 0;
 }
 
 .login-footer {

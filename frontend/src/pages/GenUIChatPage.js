@@ -17,7 +17,6 @@ import {
   AgentStatusCard,
   FixCard,
   WorkflowTimeline,
-  Alert,
   Expandable,
   Tabs,
   Badge
@@ -26,7 +25,7 @@ import { useAGUIState, parseSSEData } from '../components/AGUIRenderer';
 import '../components/GenUIComponents.css';
 import './ChatPage.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : '/api';
 
 // Animation variants
 const fadeInUp = {

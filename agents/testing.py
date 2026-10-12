@@ -55,6 +55,8 @@ CRITICAL RULES:
 - NEVER return placeholder strings — return real code
 - Do NOT include markdown or code blocks — just pure JSON
 - Escape all quotes and newlines properly in JSON strings
+- COMMENTS: Keep comments MINIMAL. Only short single-line comments. Do NOT add docstrings, multi-line comment blocks, or verbose explanations. Do NOT add comments to every line.
+- Do NOT wrap fixed_code in ```python or any markdown fence
 
 Focus on adding:
 - try/catch or try/except blocks for risky operations

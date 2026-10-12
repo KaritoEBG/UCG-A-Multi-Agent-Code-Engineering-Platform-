@@ -63,18 +63,25 @@ async def verify_google_token(credential: str) -> dict:
     """Verify Google ID token and return user info"""
     try:
         # Verify with Google's API
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(
                 f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
             )
             
             if response.status_code != 200:
-                raise HTTPException(status_code=401, detail="Invalid Google token")
+                error_detail = response.text
+                print(f"❌ Google token verification failed: {response.status_code} - {error_detail}")
+                raise HTTPException(status_code=401, detail=f"Invalid Google token: {error_detail}")
             
             google_user = response.json()
             
+            print(f"✅ Google token verified for: {google_user.get('email')}")
+            print(f"   Token audience (aud): {google_user.get('aud')}")
+            print(f"   Expected client ID:   {settings.GOOGLE_CLIENT_ID}")
+            
             # Verify the token is for our app
             if google_user.get("aud") != settings.GOOGLE_CLIENT_ID:
+                print(f"❌ Audience mismatch! aud={google_user.get('aud')} != {settings.GOOGLE_CLIENT_ID}")
                 raise HTTPException(status_code=401, detail="Token not issued for this app")
             
             return {
@@ -83,8 +90,11 @@ async def verify_google_token(credential: str) -> dict:
                 "name": google_user.get("name", google_user["email"].split("@")[0]),
                 "picture": google_user.get("picture")
             }
-    except httpx.RequestError:
-        raise HTTPException(status_code=500, detail="Failed to verify Google token")
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions as-is
+    except Exception as e:
+        print(f"❌ Google token verification error: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to verify Google token: {str(e)}")
 
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:

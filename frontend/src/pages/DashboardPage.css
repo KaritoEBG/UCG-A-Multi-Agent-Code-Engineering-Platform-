@@ -6,6 +6,27 @@
   overflow-x: hidden;
 }
 
+/* Skeleton shimmer for loading stats */
+.stat-skeleton {
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: statShimmer 1.5s ease infinite;
+}
+
+@keyframes statShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .dashboard-header,
 .dashboard-main {
   position: relative;
@@ -32,6 +53,12 @@
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--white);
+}
+
+.dashboard-header .nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .dashboard-main {
@@ -72,7 +99,15 @@
 }
 
 .stat-icon {
-  font-size: 2.5rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(102, 126, 234, 0.12);
+  border-radius: 12px;
+  color: #667eea;
+  flex-shrink: 0;
 }
 
 .stat-info {
@@ -125,15 +160,16 @@
 }
 
 .agent-icon {
-  font-size: 2rem;
   width: 50px;
   height: 50px;
-  background: rgba(249, 115, 22, 0.1);
-  border: 1px solid rgba(249, 115, 22, 0.2);
+  background: rgba(102, 126, 234, 0.12);
+  border: 1px solid rgba(102, 126, 234, 0.2);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #667eea;
+  flex-shrink: 0;
 }
 
 .agent-info {
@@ -221,7 +257,10 @@
 }
 
 .workflow-node span {
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #667eea;
 }
 
 .workflow-node label {
@@ -232,7 +271,8 @@
 
 .workflow-arrow {
   color: var(--text-muted);
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 /* Sessions Section - Grok Style */
@@ -344,7 +384,10 @@
 }
 
 .session-icon {
-  font-size: 1.5rem;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .session-info {
@@ -408,6 +451,11 @@
   color: #ef4444;
 }
 
+.delete-session-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 .empty-state {
   text-align: center;
   padding: 40px;
@@ -462,22 +510,203 @@
   }
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* — Tablets — */
 @media (max-width: 768px) {
+  .dashboard-page .container {
+    padding: 0 16px;
+  }
+
+  .dashboard-header .header-content {
+    gap: 12px;
+  }
+
+  .dashboard-header .logo span {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-main {
+    padding: 24px 0;
+  }
+
+  .stats-section h1 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+
+  .agents-section h2,
+  .workflow-section h2,
+  .sessions-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 14px;
+  }
+
+  .agents-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .agent-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
   .workflow-diagram {
     flex-wrap: wrap;
+    padding: 24px 16px;
+    gap: 12px;
   }
 
   .workflow-arrow {
     display: none;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .workflow-node {
+    padding: 12px 16px;
+    min-width: 70px;
   }
 
-  .agents-grid {
-    grid-template-columns: 1fr;
+  /* Sessions */
+  .session-card {
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .session-card .session-link {
+    gap: 12px;
+  }
+
+  .session-title {
+    max-width: 180px;
+    font-size: 0.9rem;
+  }
+
+  .session-meta {
+    gap: 8px;
+  }
+
+  .message-count {
+    font-size: 0.78rem;
+    padding: 3px 8px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .sessions-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+/* — Mobile — */
+@media (max-width: 480px) {
+  .dashboard-page .container {
+    padding: 0 12px;
+  }
+
+  .dashboard-header .header-content {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dashboard-header .logo {
+    font-size: 0.9rem;
+    gap: 8px;
+  }
+
+  .dashboard-header .nav {
+    gap: 10px;
+  }
+
+  .stats-section h1 {
+    font-size: 1.3rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 14px 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .agent-info h3 {
+    font-size: 0.9rem;
+  }
+
+  .agent-info p {
+    font-size: 0.78rem;
+  }
+
+  .session-title {
+    max-width: 120px;
+    font-size: 0.85rem;
+  }
+
+  .session-date {
+    font-size: 0.75rem;
+  }
+
+  .workflow-node {
+    padding: 10px 12px;
+    min-width: 60px;
+    border-radius: 10px;
+  }
+
+  .workflow-node label {
+    font-size: 0.7rem;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .empty-state {
+    padding: 24px;
   }
 }
 
@@ -547,4 +776,460 @@
 /* Workflow node glow pulse */
 .workflow-node:hover {
   box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
+}
+
+/* ================================================================
+   RESPONSIVE — TABLET (max-width: 1024px)
+   ================================================================ */
+@media (max-width: 1024px) {
+  .dashboard-page {
+    padding: 20px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .sessions-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .agents-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — MOBILE (max-width: 768px)
+   ================================================================ */
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 16px 12px;
+    padding-bottom: calc(16px + var(--safe-bottom, 0px));
+  }
+
+  .dashboard-header {
+    margin-bottom: 20px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.85rem;
+  }
+
+  /* Stats — 2 columns on mobile, compact */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+  }
+
+  .stat-icon {
+    font-size: 1.3rem;
+  }
+
+  /* Sessions */
+  .sessions-section h2,
+  .agents-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .session-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .session-title {
+    font-size: 0.9rem;
+    max-width: 200px;
+  }
+
+  .session-meta {
+    font-size: 0.75rem;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .session-actions {
+    gap: 6px;
+  }
+
+  .session-actions button {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    min-height: 36px;
+    border-radius: 8px;
+  }
+
+  /* Agents */
+  .agents-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .agent-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .agent-name {
+    font-size: 0.85rem;
+  }
+
+  .agent-description {
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Workflow */
+  .workflow-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  .workflow-node {
+    padding: 10px;
+    font-size: 0.75rem;
+    min-width: 100px;
+    border-radius: 10px;
+  }
+
+  /* New session button */
+  .new-session-btn {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Delete session */
+  .delete-session-btn {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 6px;
+    border-radius: 8px;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE — SMALL MOBILE (max-width: 480px)
+   ================================================================ */
+@media (max-width: 480px) {
+  .dashboard-page {
+    padding: 12px 10px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.15rem;
+  }
+
+  .stats-grid {
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.35rem;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+  }
+
+  .session-title {
+    max-width: 160px;
+    font-size: 0.82rem;
+  }
+
+  .agents-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .agent-card {
+    padding: 12px;
+  }
+}
+
+/* ================================================================
+   TOUCH-SPECIFIC
+   ================================================================ */
+@media (pointer: coarse) {
+  .session-actions button {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  .agent-card {
+    min-height: 80px;
+  }
+
+  .stat-card:hover {
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+  }
+
+  .stat-card:active {
+    border-color: rgba(249, 115, 22, 0.4);
+    transform: scale(0.98);
+  }
+}
+
+/* ================================================================
+   THEME TOGGLE BUTTON
+   ================================================================ */
+.theme-toggle-dash {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-dash:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* ================================================================
+   DASHBOARD LIGHT MODE
+   ================================================================ */
+.dashboard-page.dashboard-light {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .dashboard-header {
+  background: #ffffff;
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-page.dashboard-light .logo span {
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .theme-toggle-dash {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #475569;
+}
+
+.dashboard-page.dashboard-light .theme-toggle-dash:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .btn.btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 2px 12px rgba(79, 70, 229, 0.2);
+}
+
+.dashboard-page.dashboard-light .stats-section h1,
+.dashboard-page.dashboard-light .agents-section h2,
+.dashboard-page.dashboard-light .workflow-section h2,
+.dashboard-page.dashboard-light .sessions-header h2 {
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .stat-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-page.dashboard-light .stat-card:hover {
+  border-color: rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-page.dashboard-light .stat-icon {
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+}
+
+.dashboard-page.dashboard-light .stat-value {
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .stat-label {
+  color: #64748b;
+}
+
+.dashboard-page.dashboard-light .stat-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.04) 25%,
+    rgba(0, 0, 0, 0.08) 50%,
+    rgba(0, 0, 0, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: statShimmer 1.5s ease infinite;
+}
+
+.dashboard-page.dashboard-light .agent-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-page.dashboard-light .agent-card:hover {
+  border-color: rgba(79, 70, 229, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-page.dashboard-light .agent-icon {
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+}
+
+.dashboard-page.dashboard-light .agent-info h3 {
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .agent-info p {
+  color: #64748b;
+}
+
+.dashboard-page.dashboard-light .agent-status.active {
+  color: #059669;
+  background: rgba(5, 150, 105, 0.08);
+}
+
+.dashboard-page.dashboard-light .workflow-diagram {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-page.dashboard-light .workflow-node {
+  background: #f1f5f9;
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #334155;
+}
+
+.dashboard-page.dashboard-light .workflow-node.start,
+.dashboard-page.dashboard-light .workflow-node.end {
+  background: rgba(79, 70, 229, 0.08);
+  border-color: rgba(79, 70, 229, 0.2);
+  color: #4f46e5;
+}
+
+.dashboard-page.dashboard-light .workflow-arrow {
+  color: #94a3b8;
+}
+
+.dashboard-page.dashboard-light .session-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-page.dashboard-light .session-card:hover {
+  border-color: rgba(79, 70, 229, 0.15);
+  background: #fafbff;
+}
+
+.dashboard-page.dashboard-light .session-title {
+  color: #0f172a;
+}
+
+.dashboard-page.dashboard-light .session-date {
+  color: #94a3b8;
+}
+
+.dashboard-page.dashboard-light .session-link {
+  color: inherit;
+}
+
+.dashboard-page.dashboard-light .message-count {
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-page.dashboard-light .message-count.empty {
+  color: #94a3b8;
+}
+
+.dashboard-page.dashboard-light .empty-state {
+  color: #64748b;
+}
+
+.dashboard-page.dashboard-light .empty-state .btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+}
+
+.dashboard-page.dashboard-light .sessions-actions .btn {
+  background: #f1f5f9;
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #334155;
+}
+
+.dashboard-page.dashboard-light .sessions-actions .btn:hover {
+  background: #e2e8f0;
+}
+
+.dashboard-page.dashboard-light .sessions-actions .btn.btn-danger {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.dashboard-page.dashboard-light .delete-session-btn {
+  color: #94a3b8;
+}
+
+.dashboard-page.dashboard-light .delete-session-btn:hover {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.dashboard-page.dashboard-light .session-icon {
+  background: rgba(79, 70, 229, 0.06);
+  color: #6366f1;
+}
+
+.dashboard-page.dashboard-light .loading {
+  color: #64748b;
+}
+
+/* Light mode particle network fade */
+.dashboard-page.dashboard-light canvas {
+  opacity: 0.15 !important;
 }

@@ -1,0 +1,265 @@
+/* ==================== Setup Guide ==================== */
+
+.setup-guide {
+  margin-top: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Toggle Button */
+.sg-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+  border: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.sg-toggle:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+}
+
+.sg-toggle-icon {
+  font-size: 18px;
+}
+
+.sg-toggle-text {
+  flex: 1;
+  text-align: left;
+}
+
+.sg-toggle-chevron {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+  opacity: 0.5;
+}
+
+.sg-toggle-chevron.open {
+  transform: rotate(90deg);
+}
+
+/* Content */
+.sg-content {
+  padding: 8px;
+}
+
+/* Section */
+.sg-section {
+  margin-bottom: 4px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sg-section.open {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sg-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.sg-section-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sg-section-icon {
+  font-size: 15px;
+}
+
+.sg-section-title {
+  flex: 1;
+  text-align: left;
+}
+
+.sg-chevron {
+  font-size: 9px;
+  transition: transform 0.25s ease;
+  opacity: 0.4;
+}
+
+.sg-chevron.open {
+  transform: rotate(90deg);
+}
+
+.sg-section-body {
+  padding: 4px 12px 12px 36px;
+}
+
+/* Lists */
+.sg-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sg-list li {
+  position: relative;
+  padding: 4px 0 4px 16px;
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sg-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #6366f1;
+  font-weight: bold;
+}
+
+/* Command Block */
+.sg-command-block {
+  margin: 6px 0;
+}
+
+.sg-command-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.sg-command-text {
+  flex: 1;
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: #a5f3fc;
+  word-break: break-all;
+}
+
+.sg-copy-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 3px 7px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #94a3b8;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.sg-copy-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  color: #e2e8f0;
+}
+
+.sg-command-desc {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: #64748b;
+  padding-left: 2px;
+}
+
+/* Environment Variables */
+.sg-env-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sg-env-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sg-env-var {
+  font-family: 'Fira Code', monospace;
+  font-size: 12.5px;
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.sg-env-desc {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Database Steps */
+.sg-db-step {
+  margin-bottom: 8px;
+}
+
+.sg-db-label {
+  display: block;
+  font-size: 12.5px;
+  color: #cbd5e1;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* Tree */
+.sg-tree {
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 0;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Explanation text */
+.sg-explanation {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Troubleshooting */
+.sg-trouble-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sg-trouble-item:last-child {
+  border-bottom: none;
+}
+
+.sg-trouble-problem {
+  font-size: 12.5px;
+  color: #fca5a5;
+  margin-bottom: 4px;
+}
+
+.sg-trouble-solution {
+  font-size: 12.5px;
+  color: #86efac;
+}
+
+.sg-trouble-label {
+  font-weight: 600;
+  margin-right: 4px;
+}

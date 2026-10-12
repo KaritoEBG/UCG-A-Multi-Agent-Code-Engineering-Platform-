@@ -1,0 +1,402 @@
+/* FileTree - Project file tree sidebar styles */
+
+.file-tree {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0d1117;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.file-tree-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.file-tree-header .project-icon {
+  font-size: 14px;
+}
+
+.file-tree-header .project-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e6edf3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.file-tree-header .project-meta {
+  font-size: 11px;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+.file-tree-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.file-tree-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.file-tree-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.file-tree-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* Tree items */
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #c9d1d9;
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
+  min-height: 28px;
+}
+
+.tree-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tree-item.folder {
+  color: #8b949e;
+  font-weight: 500;
+}
+
+.tree-item.folder:hover {
+  color: #c9d1d9;
+}
+
+.tree-item.file.active {
+  background: rgba(56, 139, 253, 0.15);
+  color: #58a6ff;
+}
+
+.tree-item.file.active .tree-name {
+  font-weight: 500;
+}
+
+.tree-item.file.streaming {
+  background: rgba(56, 139, 253, 0.08);
+}
+
+.tree-item.file.completed .tree-status {
+  color: #3fb950;
+  font-size: 12px;
+}
+
+.tree-chevron {
+  font-size: 10px;
+  width: 12px;
+  color: #6e7681;
+  flex-shrink: 0;
+}
+
+.tree-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+}
+
+.tree-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-status {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.tree-status.streaming-dot {
+  color: #58a6ff;
+  font-size: 10px;
+  animation: treePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes treePulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.tree-meta {
+  font-size: 11px;
+  color: #6e7681;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.tree-children {
+  overflow: hidden;
+}
+
+.tree-folder {
+  /* Container for folder + children */
+}
+
+/* Tab bar for multi-file editor */
+.file-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #0d1117;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+  flex-shrink: 0;
+  min-height: 36px;
+}
+
+.file-tabs::-webkit-scrollbar {
+  height: 2px;
+}
+
+.file-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.file-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: #8b949e;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+
+.file-tab:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #c9d1d9;
+}
+
+.file-tab.active {
+  color: #e6edf3;
+  background: #161b22;
+}
+
+.file-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #58a6ff;
+}
+
+.file-tab .tab-icon {
+  font-size: 12px;
+}
+
+.file-tab .tab-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-tab .tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+  color: #8b949e;
+}
+
+.file-tab:hover .tab-close,
+.file-tab.active .tab-close {
+  opacity: 1;
+}
+
+.file-tab .tab-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e6edf3;
+}
+
+/* Multi-file code panel layout */
+.multi-file-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.multi-file-split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.multi-file-tree-pane {
+  width: 200px;
+  min-width: 150px;
+  max-width: 280px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.multi-file-editor-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.multi-file-code-view {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Download button */
+.download-zip-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(56, 139, 253, 0.1);
+  color: #58a6ff;
+  border: 1px solid rgba(56, 139, 253, 0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.download-zip-btn:hover {
+  background: rgba(56, 139, 253, 0.2);
+  border-color: rgba(56, 139, 253, 0.5);
+}
+
+.download-zip-btn:active {
+  transform: scale(0.98);
+}
+
+/* Project plan banner */
+.project-plan-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(56, 139, 253, 0.06);
+  border: 1px solid rgba(56, 139, 253, 0.15);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.project-plan-banner .plan-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.project-plan-banner .plan-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-plan-banner .plan-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e6edf3;
+  margin-bottom: 2px;
+}
+
+.project-plan-banner .plan-desc {
+  font-size: 12px;
+  color: #8b949e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-plan-banner .plan-stats {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.project-plan-banner .plan-stat {
+  text-align: center;
+}
+
+.project-plan-banner .plan-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #58a6ff;
+}
+
+.project-plan-banner .plan-stat-label {
+  font-size: 10px;
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* File generation progress */
+.file-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: #8b949e;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.file-progress-bar .progress-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.file-progress-bar .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #58a6ff, #3fb950);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.file-progress-bar .progress-text {
+  white-space: nowrap;
+}
+
+/* Multi-file workflow steps */
+.workflow-steps .workflow-step.planning {
+  /* Planning step styling - inherits from existing .workflow-step */
+}

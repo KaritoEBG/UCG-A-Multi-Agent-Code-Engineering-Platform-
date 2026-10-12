@@ -179,14 +179,16 @@ class SessionDB:
     async def generate_title_from_chat(prompt: str) -> str:
         """Generate a brief title for a session based on the first user prompt using AI"""
         import httpx
+        from config import key_pool
         
         try:
+            api_key = key_pool.get_key()
             # Use Groq to generate a concise title
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.post(
                     "https://api.groq.com/openai/v1/chat/completions",
                     headers={
-                        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                        "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json"
                     },
                     json={
@@ -245,7 +247,7 @@ class SessionDB:
         async for session in cursor:
             session["_id"] = str(session["_id"])
             # Get message count
-            msg_count = await db.messages.count_documents({"session_id": str(session["_id"])})
+            msg_count = await db.messages.count_documents({"session_id": str(session["_id"]), "role": "user"})
             session["message_count"] = msg_count
             sessions.append(session)
         
@@ -267,6 +269,15 @@ class SessionDB:
         await db.sessions.update_one(
             {"_id": ObjectId(session_id)},
             {"$set": {"title": title, "updated_at": datetime.utcnow()}}
+        )
+
+    @staticmethod
+    async def update_session_project_name(session_id: str, project_name: str):
+        """Save the AI-generated project base name (e.g. 'todo-app') to the session"""
+        db = get_database()
+        await db.sessions.update_one(
+            {"_id": ObjectId(session_id)},
+            {"$set": {"project_name": project_name, "updated_at": datetime.utcnow()}}
         )
     
     @staticmethod

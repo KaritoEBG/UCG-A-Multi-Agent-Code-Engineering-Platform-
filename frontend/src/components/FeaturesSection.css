@@ -1,0 +1,261 @@
+.features-section {
+  padding: 6rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+.fs-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.fs-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.fs-subtitle {
+  color: #a1a1aa;
+  font-size: 1.125rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.fs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  grid-auto-rows: minmax(280px, auto);
+}
+
+@media (min-width: 768px) {
+  .fs-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.fs-span-8 { grid-column: span 8; }
+.fs-span-4 { grid-column: span 4; }
+.fs-span-5 { grid-column: span 5; }
+.fs-span-7 { grid-column: span 7; }
+
+/* Enforce uniform card height across the grid rows */
+.fs-grid > div,
+.fs-grid > div > div {
+  height: 100%;
+}
+
+/* The Premium Glass Card Base */
+.fs-card {
+  height: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fs-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Neon Glow Accents */
+.fs-neon-blue {
+  box-shadow: 0 0 30px -10px rgba(59, 130, 246, 0.2);
+  border-top: 1px solid rgba(59, 130, 246, 0.4);
+}
+.fs-neon-blue:hover { box-shadow: 0 0 40px -5px rgba(59, 130, 246, 0.4); }
+
+.fs-neon-green {
+  box-shadow: 0 0 30px -10px rgba(34, 197, 94, 0.2);
+  border-top: 1px solid rgba(34, 197, 94, 0.4);
+}
+.fs-neon-green:hover { box-shadow: 0 0 40px -5px rgba(34, 197, 94, 0.4); }
+
+.fs-neon-purple {
+  box-shadow: 0 0 30px -10px rgba(168, 85, 247, 0.2);
+  border-top: 1px solid rgba(168, 85, 247, 0.4);
+}
+.fs-neon-purple:hover { box-shadow: 0 0 40px -5px rgba(168, 85, 247, 0.4); }
+
+.fs-neon-orange {
+  box-shadow: 0 0 30px -10px rgba(249, 115, 22, 0.2);
+  border-top: 1px solid rgba(249, 115, 22, 0.4);
+}
+.fs-neon-orange:hover { box-shadow: 0 0 40px -5px rgba(249, 115, 22, 0.4); }
+
+/* Ambient Background Blobs */
+.fs-ambient-blue {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 250px;
+  height: 250px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 0;
+  transition: background 0.5s ease;
+}
+.fs-card:hover .fs-ambient-blue { background: rgba(59, 130, 246, 0.15); }
+
+.fs-ambient-orange {
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  width: 250px;
+  height: 250px;
+  background: rgba(249, 115, 22, 0.1);
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 0;
+}
+
+/* Icons container */
+.fs-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  z-index: 10;
+  position: relative;
+}
+
+.fs-icon-blue { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: #60a5fa; }
+.fs-icon-green { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; }
+.fs-icon-purple { background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); color: #c084fc; }
+.fs-icon-orange { background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); color: #fb923c; }
+
+/* Text Content */
+.fs-card-content {
+  position: relative;
+  z-index: 10;
+}
+
+.fs-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.fs-card-desc {
+  color: #94a3b8;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+/* Agent 1 Tags */
+.fs-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 10;
+}
+.fs-tag-primary {
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.fs-tag-secondary {
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+/* Agent 2 Detail */
+.fs-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: #4ade80;
+}
+
+.fs-detail span {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+/* Agent 3 Avatars (Tech stack visual) */
+.fs-avatars {
+  display: flex;
+  margin-top: 2rem;
+}
+.fs-avatar-circle {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  border: 2px solid #070b18;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 800;
+  margin-left: -10px;
+  box-sizing: border-box;
+}
+.fs-avatar-circle:first-child { margin-left: 0; }
+
+/* Agent 4 Security Grid */
+.fs-sec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 10;
+}
+.fs-sec-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.75rem;
+  border-radius: 12px;
+}
+.fs-sec-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  color: rgba(248, 113, 113, 0.6);
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+.fs-sec-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+}

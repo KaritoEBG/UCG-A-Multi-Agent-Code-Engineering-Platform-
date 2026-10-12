@@ -57,7 +57,9 @@ CRITICAL RULES:
 - NEVER remove files from the output — if input has 9 files, output MUST have 9 files
 - NEVER return placeholder strings — return real code
 - Do NOT include markdown or code blocks — just pure JSON
-- Escape all quotes and newlines properly in JSON strings"""
+- Escape all quotes and newlines properly in JSON strings
+- COMMENTS: Keep comments MINIMAL. Only short single-line comments. Do NOT add docstrings, multi-line comment blocks, or verbose explanations. Do NOT add comments to every line — only where truly needed.
+- Do NOT wrap fixed_code in ```python or any markdown fence"""
     
     def validate(self, code):
         """Validate code and return analysis with potential fixes"""
